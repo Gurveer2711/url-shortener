@@ -1,5 +1,6 @@
-const Url = require("../models/url");
-const { nanoid } = require("nanoid");
+import Url from "../models/url.js";
+import { nanoid } from "nanoid";
+
 
 async function shortenUrl(req, res) {
   const { originalUrl } = req.body;
@@ -11,13 +12,12 @@ async function shortenUrl(req, res) {
     const shortUrl = nanoid(6);
     const url = new Url({ originalUrl, shortUrl });
     await url.save();
-    res.status(201).json(url);
+    return res.status(201).json(url);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error occurred" });
+    return res.status(500).json({ error: "Server error occurred" });
   }
 }
-
 
 async function redirectUrl(req, res) {
     const { shortUrl } = req.params;
@@ -28,44 +28,50 @@ async function redirectUrl(req, res) {
       }
         const originalUrl = url.originalUrl;
         url.visitCount += 1;
-      res.status(200).redirect({ originalUrl });
+        url.visits.push({
+          ipAddress: req.ip,
+            userAgent: req.headers["user-agent"],
+            timestamp: Date.now(),
+        });
+        await url.save();
+      return res.redirect(originalUrl);
     } catch {
       console.error(error);
-      res.status(500).json({ error: "Server error occurred" });
+      return res.status(500).json({ error: "Server error occurred" });
     }
 }
 
 async function updateUrl(req, res) {
     const { shortUrl } = req.params;
-    const { newUrl } = req.body;
     try {
         const url = await Url.findOne({ shortUrl });
         if (!url) {
-            return res.status(404).json({ error: "ShortUrl not found" });
+            return res.status(404).json({ error: "ShortUrl not found"});
         }
+        const newUrl = nanoid(6);
         url.shortUrl = newUrl;
         url.updatedAt = Date.now();
         await url.save();
-        res.status(200).json(url);
+        return res.status(200).json(url);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error occurred" });
+        return res.status(500).json({ error: "Server error occurred" });
     } 
 }
 
 async function deleteUrl(req, res) {
     const { shortUrl } = req.params;
     try {
-        const url = await Url.findOne({ shortUrl });
-        if (!url) {
-            return res.status(404).json({ error: "ShortUrl not found" });
+        const deleteUrl= await Url.findOneAndDelete({ shortUrl });
+        if (!deleteUrl) {
+          return res.status(404).json({ error: "ShortUrl not found" });
         }
-        await url.remove();
-        res.status(204).json();
+        
+        return res.status(204).json({message: "Url deleted successfully"});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error occurred" });
+        return res.status(500).json({ error: "Server error occurred" });
     }
 }
 
-module.exports = { shortenUrl, redirectUrl, updateUrl, deleteUrl };
+export { shortenUrl, redirectUrl, updateUrl, deleteUrl };

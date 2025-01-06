@@ -1,14 +1,14 @@
-const express = require("express");
-const { shortenUrl, redirectUrl, updateUrl, deleteUrl } = require("../controllers/urlController");
+import express from "express";
+import { shortenUrl, redirectUrl, updateUrl, deleteUrl } from "../controllers/url.js";
 
 const router = express.Router();
 
 router.post("/", shortenUrl);
 
-router.get("/:shorturl", redirectUrl);
+router.get("/:shortUrl", redirectUrl);
 
 router.delete("/:shortUrl", deleteUrl);
 
 router.put("/:shortUrl", updateUrl);
 
-module.exports = router;
+export default router;

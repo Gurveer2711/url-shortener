@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import { Timestamp } from "bson";
+import mongoose from "mongoose";
 
 const urlSchema = new mongoose.Schema({
   originalUrl: {
@@ -14,7 +15,23 @@ const urlSchema = new mongoose.Schema({
   visitCount: {
     type: Number,
     default: 0,
-  },
+    },
+  visits: [
+    {
+      ipAddress: {
+        type: String,
+        required: true,
+          },
+          userAgent: {
+            type: String,
+            required: true,
+          },
+          timestamp: {
+            type: Date,
+            default: Date.now,
+          },
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -24,5 +41,6 @@ const urlSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+const Url = mongoose.model("Url", urlSchema);
 
-module.exports = mongoose.model("Url", urlSchema);
+export default Url;      

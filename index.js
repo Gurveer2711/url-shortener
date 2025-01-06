@@ -1,8 +1,10 @@
-const express = require("express");
-require("dotenv").config();
+import express from "express";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import urlRoutes from "./routes/url.js";
+
+dotenv.config();
 const app = express();
-const mongoose = require("mongoose");
-const urlRoutes = require("./routes/url");
 
 mongoose
   .connect(process.env.MONGO_URI, {})
@@ -10,8 +12,7 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 app.use(express.json());
-app.use("/shorten", urlRoutes);
-
+app.use("/", urlRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
