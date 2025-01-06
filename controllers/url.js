@@ -20,7 +20,18 @@ async function shortenUrl(req, res) {
 
 
 async function getUrl(req, res) {
-    
+    const { shortUrl } = req.params;
+    try {
+      const url = await Url.findOne({ shortUrl });
+      if (!url) {
+        return res.status(404).json({ error: "ShortUrl not found" });
+      }
+      const originalUrl = url.originalUrl;
+      res.status(200).json({ originalUrl });
+    } catch {
+      console.error(error);
+      res.status(500).json({ error: "Server error occurred" });
+    }
 }
 
 async function redirectUrl(req, res) {
