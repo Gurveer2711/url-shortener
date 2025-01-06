@@ -1,28 +1,14 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const { shortenUrl, redirectUrl } = require("../controllers/urlController");
 
-const urlSchema = new mongoose.Schema({
-  originalUrl: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  shortUrl: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  visitCount: {
-    type: Number,
-    default: 0,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+const router = express.Router();
 
-module.exports = mongoose.model("Url", urlSchema);
+router.post("/", shortenUrl);
+
+router.get("/:shorturl", getUrl);
+
+router.delete("/:shortUrl", deleteUrl);
+
+router.put("/:shortUrl", updateUrl);
+
+module.exports = router;
