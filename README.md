@@ -34,6 +34,10 @@ This is a simple URL shortener service built with Node.js and Express.
 ## API Endpoints
 
 -POST / - Shorten a long URL
+
 -GET /:shortUrl - Redirect to the original URL
+
 -PUT /:shortUrl - Update the shortened URL
+
 -DELETE /:shortUrl - Delete the shortened URL
+
