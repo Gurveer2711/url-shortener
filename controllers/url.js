@@ -1,0 +1,34 @@
+const Url = require("../models/url");
+const { nanoid } = require("nanoid");
+
+async function shortenUrl(req, res) {
+  const { originalUrl } = req.body;
+
+  if (!originalUrl) {
+    return res.status(400).json({ error: "originalUrl is required" });
+  }
+  try {
+    const shortUrl = nanoid(6);
+    const url = new Url({ originalUrl, shortUrl });
+    await url.save();
+    res.status(200).json(url);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error occurred" });
+  }
+}
+
+
+async function getUrl(req, res) {
+    
+}
+
+async function redirectUrl(req, res) {
+
+}
+
+async function deleteUrl(req, res) {
+    
+}
+
+
